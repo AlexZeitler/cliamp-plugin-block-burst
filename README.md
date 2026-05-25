@@ -1,8 +1,8 @@
 # cliamp-plugin-block-burst
 
-A stereo step-meter visualizer for [cliamp](https://cliamp.stream) — nested rectangular tiers burst outward from a centered divider, each pumping with its own frequency range. Sibling of [led-burst](https://github.com/AlexZeitler/cliamp-plugin-led-burst).
+A stereo step-meter visualizer for [cliamp](https://cliamp.stream) - nested rectangular tiers burst outward from a centered divider, each pumping with its own frequency range. Sibling of [led-burst](https://github.com/AlexZeitler/cliamp-plugin-led-burst).
 
-<video src="assets/preview.mp4" controls loop muted></video>
+<video src="https://github.com/user-attachments/assets/c794b37f-30d1-41fa-a8fb-a595b2655578" controls></video>
 
 ## Install
 
@@ -26,7 +26,7 @@ cliamp plugins remove block-burst
 
 ## Customizing
 
-The plugin is a single Lua file at `~/.config/cliamp/plugins/block-burst.lua`. Open it and edit the `TIERS` table at the top — sizes, colors, and per-tier band ranges and thresholds are all there.
+The plugin is a single Lua file at `~/.config/cliamp/plugins/block-burst.lua`. Open it and edit the `TIERS` table at the top - sizes, colors, and per-tier band ranges and thresholds are all there.
 
 ## Requirements
 
@@ -35,4 +35,4 @@ The plugin is a single Lua file at `~/.config/cliamp/plugins/block-burst.lua`. O
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT - see [LICENSE](LICENSE).
