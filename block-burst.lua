@@ -14,26 +14,33 @@ local p = plugin.register({
 
 local ESC = string.char(27)
 local RESET = ESC .. "[0m"
-local function fg(n) return ESC .. "[38;5;" .. n .. "m" end
+-- Use ANSI 16-color SGR codes (30-37 / 90-97) so the terminal theme
+-- (Omarchy, etc.) drives the actual RGB values. 256-color slots would
+-- be hardcoded and ignore the theme.
+local function sgr(n) return ESC .. "[" .. n .. "m" end
 
 local LED_ON  = "■"
 local LED_OFF = "·"
 local GAP     = " "
-local DIM     = fg(236)
+local DIM     = sgr(90)  -- bright black: grey in most themes
 
 -- Tier table, ordered inner -> outer. Each tier:
 --   ledsW     : width in LEDs (chars per row = 2*ledsW - 1)
 --   bandLo/Hi : inclusive band index range (1..10) the tier listens to
 --   threshold : that band-range level (0..1) at which the tier lights
---   color     : ANSI escape for lit LEDs
+--   color     : ANSI escape for lit LEDs (bright variant)
+--   dimColor  : ANSI escape for the unlit outline (normal variant of
+--               the same hue, so the gradient survives in dim form)
 -- Heights are derived from the panel rows (see tierHeight), so every
 -- tier — including the innermost — grows in fullscreen mode.
+-- Orange has no ANSI-16 slot — we substitute magenta so the hi-mid tier
+-- still has its own theme color.
 local TIERS = {
-    { ledsW = 2, bandLo = 1, bandHi = 2,  threshold = 0.15, color = fg(45),  dimColor = fg(23)  }, -- subbass: cyan
-    { ledsW = 3, bandLo = 3, bandHi = 4,  threshold = 0.18, color = fg(46),  dimColor = fg(22)  }, -- low-mid: green
-    { ledsW = 3, bandLo = 5, bandHi = 6,  threshold = 0.18, color = fg(220), dimColor = fg(100) }, -- mid:     yellow
-    { ledsW = 3, bandLo = 7, bandHi = 8,  threshold = 0.15, color = fg(208), dimColor = fg(94)  }, -- hi-mid:  orange
-    { ledsW = 4, bandLo = 9, bandHi = 10, threshold = 0.12, color = fg(196), dimColor = fg(88)  }, -- treble:  red
+    { ledsW = 2, bandLo = 1, bandHi = 2,  threshold = 0.15, color = sgr(96), dimColor = sgr(36) }, -- subbass: cyan
+    { ledsW = 3, bandLo = 3, bandHi = 4,  threshold = 0.18, color = sgr(92), dimColor = sgr(32) }, -- low-mid: green
+    { ledsW = 3, bandLo = 5, bandHi = 6,  threshold = 0.18, color = sgr(93), dimColor = sgr(33) }, -- mid:     yellow
+    { ledsW = 3, bandLo = 7, bandHi = 8,  threshold = 0.15, color = sgr(95), dimColor = sgr(35) }, -- hi-mid:  magenta (orange substitute)
+    { ledsW = 4, bandLo = 9, bandHi = 10, threshold = 0.12, color = sgr(91), dimColor = sgr(31) }, -- treble:  red
 }
 
 -- Show a dim outline of unlit tiers in the background so the pyramid
@@ -41,7 +48,7 @@ local TIERS = {
 -- shows currently lit tiers.
 local SHOW_OUTLINE = true
 
-local DIVIDER = fg(196) .. "│" .. RESET
+local DIVIDER = sgr(91) .. "│" .. RESET
 
 -- Per-tier smoothed level state (held across frames).
 local tierEnergy = {}
